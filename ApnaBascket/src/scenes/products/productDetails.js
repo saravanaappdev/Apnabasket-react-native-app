@@ -31,7 +31,6 @@ export default class ProductsDetails extends Component {
     }
 
     componentDidMount() {
-        console.log('value----------------->', this.props.navigation.state.params.item);
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
 
@@ -42,13 +41,11 @@ export default class ProductsDetails extends Component {
     handleBackButtonClick() {
         console.log('go backk');
         this.props.navigation.goBack(null);
-        // this.props.navigation.navigate('ProductListing');
         return true;
     }
 
     backIconClicked() {
         this.props.navigation.goBack(null);
-        // this.props.navigation.navigate('ProductListing');
     }
     setQuantity(quantity) {
         this.setState({
@@ -57,7 +54,6 @@ export default class ProductsDetails extends Component {
     }
 
     navigateToCatgoryList(item) {
-        console.log('navigate tooo--->', item);
         this.props.navigation.navigate('Category', {
             item: item
         })
@@ -75,7 +71,7 @@ export default class ProductsDetails extends Component {
             return (
                 <View style={styles.marginRight5}>
                     <ApnaItemCard
-                        selectedProductItem={(item) => { this.selectedItem(item) }}
+                        selectedProductItem={(item) => { this.navigateToProductDetails(item) }}
                     />
                 </View>
             );
@@ -113,7 +109,7 @@ export default class ProductsDetails extends Component {
                         <View>
                             <Text style={styles.productName}>{this.state.product.name} <Text style={styles.itemCount}>(Each One)</Text></Text>
                             {/* <ApnaRatingStar /> */}
-                            <ApnaRatingStar rating={3}/>
+                            <ApnaRatingStar rating={3} />
                         </View>
 
                         {/* Description */}

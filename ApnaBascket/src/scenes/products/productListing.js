@@ -32,13 +32,21 @@ export default class ProductsListing extends Component {
         return true;
     }
 
+    navigateToProductDetails(item) {
+        this.props.navigation.navigate('ProductDetails', {
+            item: item
+        })
+    }
+
     backIconClicked() {
         this.props.navigation.goBack(null);
     }
     render() {
         const renderItem = ({ item, index }) => {
             return (
-                <ApnaItemCard />
+                <ApnaItemCard
+                    selectedProductItem={(item) => { this.navigateToProductDetails(item) }}
+                />
             );
         };
         return (
