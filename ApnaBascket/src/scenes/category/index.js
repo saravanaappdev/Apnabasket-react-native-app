@@ -1,3 +1,4 @@
+import { Toast } from 'native-base';
 import React, { Component } from "react";
 import { BackHandler, SafeAreaView, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,6 +14,7 @@ export default class Category extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             isCategorySelected: true,
+            productList: [],
         };
         this.backIconClicked = this.backIconClicked.bind(this);
     }
@@ -28,47 +30,57 @@ export default class Category extends Component {
 
     handleBackButtonClick() {
         console.log('go backk');
-        // this.props.navigation.goBack(null);
-        this.props.navigation.navigate('Home');
+        this.props.navigation.goBack(null);
         return true;
     }
 
     navigateToCatgoryList(item) {
-        console.log('navigate tooo--->', item);
-        this.props.navigation.navigate('Product', {
+        this.props.navigation.navigate('ProductListing', {
             item: item
         })
     }
 
     backIconClicked() {
-        console.log('bac icons clieddkkk--->');
         this.props.navigation.navigate('Home');
+    }
+
+    showErrorToast() {
+        Toast.show({
+            text: "Something went wrong!",
+            type: "danger",
+        })
     }
 
     async getProducts() {
         await getAllProducts().then(data => {
-            console.log('dat---->', data);
+            this.setState({
+                productList: data,
+            })
         }).catch(err => {
-            console.log('err--->', err);
+            this.showErrorToast();
+        })
+    }
+    navigateToProductDetails(item) {
+        this.props.navigation.navigate('ProductDetails', {
+            item: item
         })
     }
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView style={{ backgroundColor: 'white', flex: 1 }}
+                <ScrollView style={{ flex: 1 }}
                     stickyHeaderIndices={[0]}
                     showsVerticalScrollIndicator={false}
                 >
                     <View
-                        style={{ zIndex: 10, backgroundColor: '#FBF7F4', paddingTop: 45 }}>
-                        <View style={{ marginLeft: 20, marginRight: 20 }}>
+                        style={styles.header}>
+                        <View style={styles.marginX20}>
                             <HomeHeader
                                 backIconClicked={this.backIconClicked.bind(this)}
                                 isCategoryHeader={true} />
                         </View>
                         <View style={{ marginTop: 10 }}>
                             <CategorySelector selectedCategory={(item) => {
-                                console.log('category selected--->', item);
                                 this.setState({
                                     isCategorySelected: true,
                                 })
@@ -77,11 +89,13 @@ export default class Category extends Component {
                     </View>
 
                     <ApnaProductsContainer
+                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
                         navigateTocategory={this.navigateToCatgoryList.bind(this)}
                         heading={"Fruits"}
                     />
 
                     <ApnaProductsContainer
+                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
                         navigateTocategory={this.navigateToCatgoryList.bind(this)}
                         heading={"Vegetables"}
                     />
@@ -97,14 +111,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: THEME.BLACK,
     },
-    header: {
-        backgroundColor: 'red',
-        paddingLeft: 24,
-        paddingRight: 24,
-        borderWidth: 0,
-        elevation: 0,
-    },
+    header: { zIndex: 10, backgroundColor: THEME.SECONDARY, paddingTop: 45 },
     container: {
         flex: 1,
+    },
+    marginX20: {
+        marginLeft: 20, marginRight: 20,
     },
 });

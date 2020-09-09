@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import Constants from '../../constants';
 import ApnaCategoryItem from '../atoms/categoryItem';
+import { THEME } from '../../styles/colors';
 
 export default class ApnaCategorySelector extends Component {
     constructor(props) {
@@ -14,14 +15,8 @@ export default class ApnaCategorySelector extends Component {
         };
     }
 
-    componentDidMount() {
-
-    }
-
     async changeActiveCategory(selectedItem) {
-        console.log('not required outsidee-->');
         if (this.state.isSwitchRequired) {
-            console.log('not required-->');
             this.state.categoryList.map(item => {
                 if (selectedItem.id === item.id) {
                     item.isActive = true;
@@ -73,8 +68,8 @@ const styles = StyleSheet.create({
     categorySelector: {
         flexDirection: 'row',
         borderWidth: 1,
-        borderColor: '#E5DEDA',
-        backgroundColor: '#FBF7F4',
+        borderColor: THEME.LIGHT_GRAY,
+        backgroundColor: THEME.SECONDARY,
         alignItems: 'center',
         justifyContent: 'center',
         height: 50,

@@ -2,63 +2,22 @@ import { Input, Item, View } from 'native-base';
 import React, { Component } from 'react';
 import { Image, StyleSheet } from 'react-native';
 import search from '../../assets/images/png/search.png';
-import Constants from '../../constants';
 import { THEME } from '../../styles/colors';
 export default class ApnaSearchBox extends Component {
     constructor(props) {
         super(props);
         this.state = {
             value: this.props.value || '',
-            isItemActive: false,
-            isItemInactive: true,
-            error: false,
-            required: this.props.required || false,
-            flag: false,
         };
     }
-
     onFocus() {
-        this.setState({
-            isItemActive: true,
-        });
     }
 
     onBlur() {
-        this.setState(
-            {
-                isItemActive: false,
-                flag: true,
-            },
-            () => {
-                if (this.props.required) {
-                    this.setState({
-                        required: this.state.value.length === 0 ? true : false,
-                    });
-                }
-                if (!this.state.required) {
-                    this.setState({
-                        error:
-                            this.props.type === 'email'
-                                ? this.validateEmail(this.state.value)
-                                : this.state.error,
-                    });
-                }
-            },
-        );
     }
-
-    validateEmail = email => {
-        return !Constants.EMAIL_REGEX.test(email);
-    };
 
     pressedkey = (data) => {
         this.props.pressedkey(data.nativeEvent.key);
-    }
-    closeIconClicked = async () => {
-        await this.setState({
-            value: '',
-        });
-        this.props.closeIconClicked()
     }
     onValueChange = (value) => {
         this.setState({
@@ -115,7 +74,7 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: THEME.WHITE,
         marginLeft: 0,
-        borderColor: '#E5DEDA',
+        borderColor: THEME.LIGHT_GRAY,
         borderWidth: 3,
         alignItems: 'center',
         justifyContent: 'center',

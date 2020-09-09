@@ -15,49 +15,52 @@ export default class Home extends Component {
         };
     }
     navigateToCategory(item) {
-        console.log('naviii--.>');
         this.props.navigation.navigate('Category', {
             item: item,
         });
 
     }
     navigateToCatgoryList(item) {
-        console.log('navigate tooo--->', item);
-        this.props.navigation.navigate('Category', {
+        this.props.navigation.navigate('ProductListing', {
             item: item
         })
-
     }
+    navigateToProductDetails(item) {
+        this.props.navigation.navigate('ProductDetails', {
+            item: item
+        })
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView style={{ backgroundColor: 'white', flex: 1 }}
+                <ScrollView style={{ flex: 1 }}
                     stickyHeaderIndices={[0]}
                     showsVerticalScrollIndicator={false}
                 >
                     <View
-                        style={{ zIndex: 10, backgroundColor: '#FBF7F4', paddingTop: 45 }}>
-                        <View style={{ marginLeft: 20, marginRight: 20 }}>
+                        style={styles.headerContainer}>
+                        <View style={styles.marginX20}>
                             <HomeHeader />
                         </View>
-                        <View style={{ marginTop: 10 }}>
+                        <View style={styles.marginTop10}>
                             <CategorySelector
                                 categoryList={Constants.CATEGORY_LIST}
                                 isSwitchRequired={false}
                                 selectedCategory={(item) => {
-                                    console.log('category selected--->', item);
                                     this.navigateToCategory(item);
                                 }} />
                         </View>
                     </View>
 
                     <ApnaProductsContainer
+                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
                         navigateTocategory={this.navigateToCatgoryList.bind(this)}
-                        heading={"Fruits"}
+                        heading={"Weekly Special"}
                     />
 
                     <ApnaProductsContainer
-                        heading={"Vegetables"}
+                        heading={"Featured Products"}
                     />
 
                     <ApnaProductsContainer
@@ -72,12 +75,7 @@ export default class Home extends Component {
 
 
 const styles = StyleSheet.create({
-    profilePage: {
-        flex: 1,
-        backgroundColor: THEME.BLACK,
-    },
     header: {
-        backgroundColor: 'red',
         paddingLeft: 24,
         paddingRight: 24,
         borderWidth: 0,
@@ -86,4 +84,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    headerContainer: {
+        zIndex: 10,
+        backgroundColor: THEME.SECONDARY,
+        paddingTop: 45,
+    },
+    marginX20: {
+        marginLeft: 20, marginRight: 20,
+    },
+    marginTop10: {
+        marginTop: 10,
+    }
 });

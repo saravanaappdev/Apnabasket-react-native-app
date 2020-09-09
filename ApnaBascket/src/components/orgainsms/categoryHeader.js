@@ -1,12 +1,12 @@
 import { View } from 'native-base';
 import React, { Component } from "react";
-import { Image, Text, TouchableOpacity } from "react-native";
-import Browse from '../../assets/images/png/browse.png';
+import { Image, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Cart from '../../assets/images/png/cart-notification.png';
-import Logo from '../../assets/images/png/logomark.png';
 import Bell from '../../assets/images/png/notification.png';
 import { defineIcon } from '../../assets/images/svg';
 import ApnaSearchBox from '../../components/atoms/searchBox';
+import { THEME } from '../../styles/colors';
+import { scaleFont } from '../../styles/mixins';
 
 export default class CategoryHeader extends Component {
     constructor(props) {
@@ -21,7 +21,7 @@ export default class CategoryHeader extends Component {
     }
     searchItem(value) {
     }
-    backIconClicked(){
+    backIconClicked() {
         this.props.backIconClicked();
     }
 
@@ -30,8 +30,8 @@ export default class CategoryHeader extends Component {
             <View>
                 {/* small Header */}
                 <View>
-                    <View style={{ flexDirection: 'row', marginRight: 10, marginTop: 30, alignItems: 'center' }}>
-                        <TouchableOpacity onPress={()=>{ this.backIconClicked()}} style={{ marginRight: 20 }}>
+                    <View style={styles.CategoryHeader}>
+                        <TouchableOpacity onPress={() => { this.backIconClicked() }} style={{ marginRight: 20 }}>
                             {defineIcon('arrow-back', 'black', 10, 18)}
                         </TouchableOpacity>
                         <View style={{ flex: 1, marginRight: 21 }}>
@@ -44,11 +44,11 @@ export default class CategoryHeader extends Component {
                                 placeholder="Search"
                                 onFocus={() => this.onFocus} />
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                        <View style={styles.notifcationIconsSection}>
                             {/* cart Icon */}
-                            <TouchableOpacity style={{ marginRight: 20 }}>
-                                <View style={{ width: 16, height: 16, backgroundColor: '#F15C25', borderRadius: 100, position: 'absolute', top: -10, left: 10, zIndex: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: 'white', fontSize: 10 }}>8</Text>
+                            <TouchableOpacity style={styles.marginTop20}>
+                                <View style={styles.cartIcon}>
+                                    <Text style={styles.notification}>8</Text>
                                 </View>
                                 <Image
                                     source={Cart}
@@ -60,8 +60,8 @@ export default class CategoryHeader extends Component {
                             </TouchableOpacity>
                             {/* Bell Icon */}
                             <TouchableOpacity >
-                                <View style={{ width: 16, height: 16, backgroundColor: '#F15C25', borderRadius: 100, position: 'absolute', top: -4, left: 11, zIndex: 10, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: 'white', fontSize: 10 }}>2</Text>
+                                <View style={styles.bellIcon}>
+                                    <Text style={styles.notification}>2</Text>
                                 </View>
                                 <Image
                                     source={Bell}
@@ -78,3 +78,46 @@ export default class CategoryHeader extends Component {
         )
     }
 }
+
+const styles = StyleSheet.create({
+    CategoryHeader: {
+        flexDirection: 'row',
+        marginRight: 10,
+        marginTop: 30,
+        alignItems: 'center',
+    },
+    notifcationIconsSection: {
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end',
+    },
+    marginTop20: {
+        marginRight: 20,
+    },
+    cartIcon: {
+        width: 16,
+        height: 16,
+        backgroundColor: THEME.DARK_ORANGE,
+        borderRadius: 100,
+        position: 'absolute',
+        top: -10,
+        left: 10,
+        zIndex: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    bellIcon: {
+        width: 16,
+        height: 16,
+        backgroundColor: THEME.DARK_ORANGE,
+        borderRadius: 100,
+        position: 'absolute',
+        top: -4,
+        left: 11,
+        zIndex: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    notification: {
+        color: THEME.WHITE,
+        fontSize: scaleFont(10)
+    }
+});

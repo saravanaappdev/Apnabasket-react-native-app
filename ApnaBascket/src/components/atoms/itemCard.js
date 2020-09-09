@@ -4,7 +4,9 @@ import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import Cabbage from '../../assets/images/png/cabbage.png';
 import Cart from '../../assets/images/png/cart.png';
 import ShoppingList from '../../assets/images/png/shopping-list.png';
+import Constants from '../../constants';
 import { THEME } from '../../styles/colors';
+import { scaleFont } from '../../styles/mixins';
 
 export default class ApnaItemCard extends Component {
     constructor(props) {
@@ -13,13 +15,17 @@ export default class ApnaItemCard extends Component {
             isOfferAvaiable: this.props.isOfferAvaiable || false,
             offerpercentage: this.props.offerpercentage || 0,
             isSoldOut: this.props.isSoldOut || false,
+            product: Constants.PRODUCT,
         };
     }
 
     selectedItem(item) {
-        console.log('item--->', item);
+        this.props.selectedProductItem(this.state.product)
     }
 
+    lbsToKgConvert(itemCount) {
+        return `${(Constants.ONE_LB * itemCount).toFixed(2)} kg`
+    }
     render() {
         return (
             <TouchableOpacity onPress={() => { this.selectedItem() }} style={[styles.itemCard]} activeOpacity={0.7}>
@@ -30,40 +36,30 @@ export default class ApnaItemCard extends Component {
                 <View>
                     <Image
                         source={Cabbage}
-                        style={{
-                            maxWidth: 135,
-                            maxHeight: 135,
-                        }}
+                        style={styles.cabbage}
                     />
                 </View>
 
-                <View style={{ marginTop: 5 }}>
-                    <Text style={{ color: '#707070', fontSize: 10 }}>170 g</Text>
-                    <Text numberOfLines={2} ellipsizeMode='tail' style={{ color: '#353839', fontSize: 14, height: 35, fontWeight: 'bold' }}>Chinese Cabbage kljr hre th erj hte hrkjehte hterh</Text>
+                <View style={styles.marginTop5}>
+                    <Text style={styles.weight}>{this.lbsToKgConvert(this.state.product.weight)}</Text>
+                    <Text numberOfLines={2} ellipsizeMode='tail' style={styles.productName}>{this.state.product.name}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, alignItems: 'center' }}>
+                <View style={styles.priceDetails}>
                     <View>
                         {/* offer text*/}
                         {this.state.isOfferAvaiable ?
-                            (<Text style={{ color: 'black', textDecorationLine: 'line-through', textDecorationStyle: 'solid', fontSize: 12, position: 'absolute', top: -14 }}>$5.99</Text>)
+                            (<Text style={styles.offerPrice}>${this.state.product.regular_price}</Text>)
                             : null}
-                        <Text style={{ color: '#F15C25', fontSize: 14 }}>$2.99</Text>
+                        <Text style={styles.price}>${this.state.product.sale_price}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
+                    <View style={styles.flexRow}>
                         <Image
                             source={ShoppingList}
-                            style={{
-                                width: 30,
-                                height: 30,
-                                marginRight: 10,
-                            }}
+                            style={styles.ShoppingList}
                         />
                         <Image
                             source={Cart}
-                            style={{
-                                width: 30,
-                                height: 30,
-                            }}
+                            style={styles.cart}
                         />
                     </View>
                 </View>
@@ -77,11 +73,10 @@ const styles = StyleSheet.create({
         width: 155,
         elevation: 3,
         zIndex: 5,
-        backgroundColor: 'white',
+        backgroundColor: THEME.WHITE,
         borderRadius: 20,
         padding: 10,
-        marginLeft: 12,
-        marginLeft: 12,
+        marginLeft: 2,
         marginTop: 20,
         marginBottom: 10,
         flexDirection: 'column',
@@ -100,13 +95,61 @@ const styles = StyleSheet.create({
         top: -12
     },
     soldOut: {
-        backgroundColor: '#F15C25',
+        backgroundColor: THEME.DARK_ORANGE,
     },
     offer: {
-        backgroundColor: 'green',
+        backgroundColor: THEME.GREEN,
     },
     offerText: {
         fontSize: 10.5,
         color: THEME.WHITE,
+    },
+    marginTop5: {
+        marginTop: 5,
+    },
+    weight: {
+        color: THEME.SECONDARY_TEXT,
+        fontSize: scaleFont(10),
+    },
+    productName: {
+        color: THEME.ACTIVE_TEXT,
+        fontSize: scaleFont(14),
+        height: 35,
+        fontWeight: 'bold',
+    },
+    priceDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
+        alignItems: 'center',
+    },
+    price: {
+        color: THEME.DARK_ORANGE,
+        fontSize: scaleFont(14),
+    },
+    offerPrice: {
+        color: 'black',
+        textDecorationLine: 'line-through',
+        textDecorationStyle: 'solid',
+        fontSize: scaleFont(12),
+        position: 'absolute',
+        top: -14,
+        width: 100,
+    },
+    flexRow: {
+        flexDirection: 'row',
+    },
+    cart: {
+        width: 30,
+        height: 30,
+    },
+    shoppingList: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
+    },
+    cabbage: {
+        maxWidth: 135,
+        maxHeight: 135,
     }
 });

@@ -16,6 +16,7 @@ export default class ApnaProductsContainer extends Component {
             categoryList: Constants.CATEGORY_LIST,
             heading: this.props.heading || 'Test',
             itemsToShow: Constants.MAX_NUMBER_ITEMS_TO_SHOW,
+            isHeaderRequired: this.props.isHeaderRequired || true,
         };
     }
 
@@ -29,7 +30,6 @@ export default class ApnaProductsContainer extends Component {
     }
 
     navigateToCategoryList(item) {
-        console.log('item--->', item);
         this.props.navigateTocategory(item);
     }
     render() {
@@ -40,8 +40,9 @@ export default class ApnaProductsContainer extends Component {
                         (<View>
                             <ApnaEmptyCard />
                         </View>) :
-                        (<View>
+                        (<View style={{ marginLeft: 10 }}>
                             <ApnaItemCard
+                                selectedProductItem={(item) => { this.props.selectedItem(item) }}
                             />
                         </View>)}
                 </View>
@@ -51,16 +52,16 @@ export default class ApnaProductsContainer extends Component {
             <View>
                 <View style={styles.categoryHeader}>
                     <View>
-                        <Text style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(20) }}>{this.state.heading}</Text>
-                        <View style={{ backgroundColor: THEME.ACTIVE_TEXT, width: 25, height: 1.5, marginTop: 7 }}></View>
+                        <Text style={styles.productHeading}>{this.state.heading}</Text>
+                        <View style={styles.borderLine}></View>
                     </View>
-                    <Text onPress={() => { this.navigateToCategoryList(this.state.categoryList) }} style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(13) }}>
+                    <Text onPress={() => { this.navigateToCategoryList(this.state.categoryList) }} style={styles.arrowBack}>
                         View all
                         {defineIcon('arrow-right')}
                     </Text>
                 </View>
                 <FlatList
-                    contentContainerStyle={{ flexGrow: 1, paddingLeft: 10, paddingRight: 20 }}
+                    contentContainerStyle={styles.productsList}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     data={this.state.categoryList.slice(0, this.state.itemsToShow)}
@@ -82,5 +83,24 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    prouctHeading: {
+        color: THEME.ACTIVE_TEXT,
+        fontSize: scaleFont(25),
+    },
+    borderLine: {
+        backgroundColor: THEME.ACTIVE_TEXT,
+        width: 25,
+        height: 1.5,
+        marginTop: 7,
+    },
+    arrowBack: {
+        color: THEME.ACTIVE_TEXT,
+        fontSize: scaleFont(13),
+    },
+    productsList: {
+        flexGrow: 1,
+        paddingLeft: 10,
+        paddingRight: 20,
     }
 });

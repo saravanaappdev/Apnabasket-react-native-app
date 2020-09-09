@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-
+import { scaleFont } from '../../styles/mixins';
+import { THEME } from '../../styles/colors';
 export default class ApnaEmptyCard extends Component {
     constructor(props) {
         super(props);
@@ -13,14 +14,14 @@ export default class ApnaEmptyCard extends Component {
 
     render() {
         return (
-            <TouchableOpacity style={[styles.itemCard]}>
+            <TouchableOpacity style={[styles.emptyCard]}>
                 <Text style={{ fontSize: 16 }}>+5 more</Text>
             </TouchableOpacity>)
     }
 }
 
 const styles = StyleSheet.create({
-    itemCard: {
+    emptyCard: {
         height: 250,
         width: 155,
         elevation: 3,
@@ -35,6 +36,9 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FFC315',
+        backgroundColor: THEME.PRIMARY,
     },
+    cardText: {
+        fontSize: scaleFont(16),
+    }
 });

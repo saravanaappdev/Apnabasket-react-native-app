@@ -15,19 +15,36 @@ export default class ApnaCategoryItem extends Component {
 
     render() {
         return (
-            <TouchableOpacity activeOpacity={0.9} onPress={() => { this.props.categoryClicked(this.state.itemId) }} style={{ paddingLeft: 20, paddingRight: 20 }}>
+            <TouchableOpacity activeOpacity={0.9} onPress={() => { this.props.categoryClicked(this.state.itemId) }} style={styles.categoryItem}>
                 {this.props.isActive ?
                     (<View>
-                        <Text style={{ color: THEME.ACTIVE_TEXT, fontWeight: 'bold', fontFamily: "Muli", }}>{this.state.categoryName}</Text>
-                        <View style={{ backgroundColor: 'red', width: 25, height: 1, marginTop: 7 }}></View>
+                        <Text style={styles.activeCategoryName}>{this.state.categoryName}</Text>
+                        <View style={styles.bottomLine}></View>
                     </View>)
                     :
-                    (<Text style={{ color: THEME.INACTIVE_TEXT, fontWeight: 'bold' }}>{this.state.categoryName}</Text>)}
+                    (<Text style={styles.inActiveCategoryName}>{this.state.categoryName}</Text>)}
             </TouchableOpacity>
         )
     }
 }
 
 const styles = StyleSheet.create({
-
+    categoryItem: {
+        paddingLeft: 20,
+        paddingRight: 20,
+    },
+    activeCategoryName: {
+        color: THEME.ACTIVE_TEXT,
+        fontWeight: 'bold'
+    },
+    bottomLine:{
+        backgroundColor: 'red',
+        width: 25,
+        height: 1,
+        marginTop: 7,
+    },
+    inActiveCategoryName: {
+        color: THEME.INACTIVE_TEXT,
+        fontWeight: 'bold',
+    }
 });
