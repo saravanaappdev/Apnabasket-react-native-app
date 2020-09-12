@@ -2,6 +2,7 @@ import { Footer } from 'native-base';
 import React, { Component } from "react";
 import { BackHandler, Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import Swiper from 'react-native-swiper';
 import Cabbage from '../../assets/images/png/cabbage.png';
 import { defineIcon } from '../../assets/images/svg';
 import ApnaButton from '../../components/atoms/Buttons';
@@ -11,7 +12,6 @@ import ApnaRatingStar from '../../components/atoms/ratingStar';
 import Constants from '../../constants';
 import { THEME } from '../../styles/colors';
 import { scaleFont } from '../../styles/mixins';
-
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -24,6 +24,8 @@ export default class ProductsDetails extends Component {
             isCategorySelected: true,
             product: this.props.navigation.state.params.item || {},
             quantity: 0,
+            slideIndex: 0,
+            slideStatus: [true, false, false],
             productList: Constants.ALL_PRODUCTS,
             productDetails: Constants.PRODUCT_DESCRIPTION,
         };
@@ -66,6 +68,21 @@ export default class ProductsDetails extends Component {
     selectedItem(item) {
         console.log('item--->', item);
     }
+    slideChange(activeIndex) {
+        this.setState({
+            slideIndex: activeIndex,
+        })
+        console.log('--===>', this.state.slideStatus[0], this.state.slideStatus[1], this.state.slideStatus[2]);
+        
+        const slide=this.state.slideStatus.map((status, index) => {
+            console.log('indexx--->', index, activeIndex,  index == activeIndex);
+            return index == activeIndex;
+        })
+        console.log();
+        this.setState({
+            slideStatus: slide,
+        })
+    }
     render() {
         const renderItem = ({ item, index }) => {
             return (
@@ -83,9 +100,9 @@ export default class ProductsDetails extends Component {
                     showsVerticalScrollIndicator={false}
                 >
                     <View
-                        style={{ backgroundColor: '#FBF7F4', paddingTop: 35, paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: '#E5DEDA', zIndex: 100, backgroundColor: 'white' }}>
+                        style={{ paddingTop: 35, paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: '#E5DEDA', zIndex: 100, backgroundColor: THEME.SECONDARY }}>
                         <View style={{ marginLeft: 20, marginRight: 20, paddingTop: 50, paddingBottom: 5, flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => { this.backIconClicked() }} style={{ marginRight: 20 }}>
+                            <TouchableOpacity onPress={() => { this.backIconClicked() }} style={{ marginRight: 20, height: 30, width: 20, justifyContent: 'center' }}>
                                 {defineIcon('arrow-back', 'black', 10, 18)}
                             </TouchableOpacity>
                             <Text style={styles.heading}>{this.state.product.name}</Text>
@@ -94,15 +111,52 @@ export default class ProductsDetails extends Component {
                     </View>
                     {/* Product details */}
                     <View style={{ margin: 20 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <Image
-                                source={Cabbage}
-                                style={styles.image}
-                            />
+                        <View>
+                            <Swiper style={styles.wrapper}
+                                onIndexChanged={(index) => {
+                                    console.log('index--->', index)
+                                    this.slideChange(index);
+                                }}
+                                dotColor="transparent"
+                                activeDotColor="transparent"
+                                showsHorizontalScrollIndicator={false}
+                                showsVerticalScrollIndicator={false}
+                                showsButtons={false}
+                                showsPagination={false}
+                            >
+                                <View style={styles.slide1}>
+                                    <Image
+                                        source={Cabbage}
+                                        style={styles.image}
+                                    />
+                                </View>
+                                <View style={styles.slide1}>
+                                    <Image
+                                        source={Cabbage}
+                                        style={styles.image}
+                                    />
+                                </View>
+                                <View style={styles.slide1}>
+                                    <Image
+                                        source={Cabbage}
+                                        style={styles.image}
+                                    />
+                                </View>
+                            </Swiper>
                         </View>
                         {/* SKU */}
-                        <View style={styles.sku}>
-                            <Text style={styles.skuText}>SKU: {this.state.product.sku}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <View style={styles.sku}>
+                                <Text style={styles.skuText}>SKU: {this.state.product.sku}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={[styles.sliderIndicator, this.state.slideStatus[0] ? styles.activeIndicator : styles.inactiveIndicator, { marginRight: 10 }]}>
+                                </View>
+                                <View style={[styles.sliderIndicator, this.state.slideStatus[1] ? styles.activeIndicator : styles.inactiveIndicator, { marginRight: 10 }]}>
+                                </View>
+                                <View style={[styles.sliderIndicator, this.state.slideStatus[2] ? styles.activeIndicator : styles.inactiveIndicator]}>
+                                </View>
+                            </View>
                         </View>
 
                         {/* Rating */}
@@ -191,7 +245,7 @@ export default class ProductsDetails extends Component {
 
 const styles = StyleSheet.create({
     image: {
-        width: windowWidth * 0.75,
+        width: '100%',
         height: windowHeight * 0.33
     },
     profilePage: {
@@ -291,5 +345,42 @@ const styles = StyleSheet.create({
     },
     marginRight5: {
         marginRight: 10,
+    },
+    wrapper: {
+        height: 250,
+        backgroundColor: 'red',
+
+    },
+    slide1: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#9DD6EB'
+    },
+    slide2: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#97CAE5'
+    },
+    slide3: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#92BBD9'
+    },
+    text: {
+        color: '#fff',
+        fontSize: 30,
+        fontWeight: 'bold'
+    },
+    sliderIndicator: {
+        height: 4, width: 20, borderRadius: 100,
+    },
+    inactiveIndicator: {
+        backgroundColor: '#E5DEDA',
+    },
+    activeIndicator: {
+        backgroundColor: '#F15C25',
     }
 }); 

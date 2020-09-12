@@ -1,10 +1,14 @@
 export default {
     KEYS: {
         CONSUMER_KEY: 'ck_c10c31c28f564647c22162315ade3151acf71a2a',
-        CONSUMER_SECRET: 'cs_5614e6116f33c979dedb5b7a076178e24a37ad65',
+        CONSUMER_SECRET_KEY: 'cs_5614e6116f33c979dedb5b7a076178e24a37ad65',
+    },
+    VERSION: {
+        V1: 'api/v1',
+        V3: 'wc/v3',
     },
     API: {
-        SERVER: 'http://apnabasket.blazedream.in/apanabasket/',
+        SERVER: 'https://apnabasket.blazedream.in/apanabasket/',
         GET_ALL_PRODUCTS: 'wp-json/wc/v3/products',
     },
     HTTP_STATUS_CODE: {
@@ -18,6 +22,33 @@ export default {
     RATING_COUNT:5,
     MAX_NUMBER_ITEMS_TO_SHOW: 4,
     CATEGORY_LIST: [
+        {
+            id: 1,
+            categoryName: 'FRUITS & VEGETABLES',
+            isActive: false,
+        },
+        {
+            id: 2,
+            categoryName: 'DELI',
+            isActive: false,
+        },
+        {
+            id: 3,
+            categoryName: 'PREPARED FOODS',
+            isActive: false,
+        },
+        {
+            id: 4,
+            categoryName: 'SNACKS',
+            isActive: false,
+        },
+        {
+            id: 5,
+            categoryName: 'VEGETABLES',
+            isActive: false,
+        },
+    ],
+    CATEGORY_LIST_HOME: [
         {
             id: 1,
             categoryName: 'FRUITS & VEGETABLES',

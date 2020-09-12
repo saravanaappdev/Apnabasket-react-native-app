@@ -87,7 +87,13 @@ export default class Header extends Component {
 
 const styles = StyleSheet.create({
     header: {
-        flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginTop: 40, marginBottom: 20, marginLeft: 5, marginRight: 10
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 40,
+        marginBottom: 20,
+        marginLeft: 5,
+        marginRight: 10,
     },
     browse: {
         maxWidth: 135,
@@ -97,12 +103,38 @@ const styles = StyleSheet.create({
         maxWidth: 135,
         maxHeight: 135,
     },
-    iconSection: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
+    iconSection: { 
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
     marginRight20: {
         marginRight: 20,
     },
-    cartIcon: { width: 16, height: 16, backgroundColor: THEME.DARK_ORANGE, borderRadius: 100, position: 'absolute', top: -10, left: 10, zIndex: 10, justifyContent: 'center', alignItems: 'center' },
-    bellIcon: { width: 16, height: 20, backgroundColor: THEME.DARK_ORANGE, borderRadius: 100, position: 'absolute', top: -4, left: 11, zIndex: 10, justifyContent: 'center', alignItems: 'center' },
+    cartIcon: { 
+        width: 16,
+        height: 16,
+        backgroundColor: THEME.DARK_ORANGE,
+        borderRadius: 100,
+        position: 'absolute',
+        top: -10,
+        left: 10,
+        zIndex: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    bellIcon: {
+        width: 16,
+        height: 16,
+        backgroundColor: THEME.DARK_ORANGE,
+        borderRadius: 100,
+        position: 'absolute',
+        top: -4,
+        left: 11,
+        zIndex: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     notification: {
         color: 'white',
         fontSize: 10,

@@ -142,11 +142,11 @@ const styles = StyleSheet.create({
     cart: {
         width: 30,
         height: 30,
+        marginLeft: 8,
     },
     shoppingList: {
         width: 30,
         height: 30,
-        marginRight: 10,
     },
     cabbage: {
         maxWidth: 135,

@@ -1,8 +1,10 @@
+import { Footer } from 'native-base';
 import React, { Component } from "react";
 import { BackHandler, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { defineIcon } from '../../assets/images/svg';
 import ApnaItemCard from '../../components/atoms/itemCard';
+import BottomNavigator from '../../components/orgainsms/bottomNavigator';
 import Constants from '../../constants';
 import { THEME } from '../../styles/colors';
 import { scaleFont } from '../../styles/mixins';
@@ -68,7 +70,7 @@ export default class ProductsListing extends Component {
                             <Text style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(20) }}>Vegetables</Text>
                             <View style={styles.bottomLine}></View>
                         </View>
-                        <Text onPress={() => { this.navigateToCategoryList(this.state.categoryList) }} style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(13) }}>
+                        <Text onPress={() => { this.navigateToCategoryList(this.state.categoryList) }} style={styles.arrowRight}>
                             View all
                         {defineIcon('arrow-right')}
                         </Text>
@@ -82,6 +84,13 @@ export default class ProductsListing extends Component {
                         extraData={this.state}
                     />
                 </ScrollView>
+                <Footer style={{ backgroundColor: 'transparent' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ width: '100%' }}>
+                            <BottomNavigator />
+                        </View>
+                    </View>
+                </Footer>
             </SafeAreaView>
         );
     }
@@ -93,7 +102,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: THEME.BLACK,
     },
-    header: { backgroundColor: '#FBF7F4', paddingTop: 45, paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: '#E5DEDA', zIndex: 100, backgroundColor: 'white' },
+    header: {
+        backgroundColor: THEME.SECONDARY,
+        paddingTop: 45,
+        paddingBottom: 10,
+        borderBottomWidth: 2,
+        borderBottomColor: THEME.LIGHT_GRAY,
+        zIndex: 100,
+    },
     container: {
         flex: 1,
     },
@@ -109,9 +125,22 @@ const styles = StyleSheet.create({
         marginLeft: 20, marginRight: 20,
     },
     productList: {
-        zIndex: 2, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingLeft: 10, paddingRight: 20
+        flex: 1,
+        zIndex: 2,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-evenly',
+        // paddingLeft: 10,
+        // paddingRight: 20,
     },
     bottomLine: {
-        backgroundColor: THEME.ACTIVE_TEXT, width: 25, height: 1.5, marginTop: 7
+        backgroundColor: THEME.ACTIVE_TEXT,
+        width: 25,
+        height: 1.5,
+        marginTop: 7,
+    },
+    arrowRight: {
+        color: THEME.ACTIVE_TEXT,
+        fontSize: scaleFont(13),
     }
 });

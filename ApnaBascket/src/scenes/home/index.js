@@ -1,9 +1,11 @@
+import { Footer } from 'native-base';
 import React, { Component } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import BottomNavigator from '../../components/orgainsms/bottomNavigator';
 import CategorySelector from '../../components/orgainsms/categorySelector';
 import ApnaProductsContainer from '../../components/orgainsms/productsContainer';
-import Constants from '../../constants';
+import { getAllProducts, getSubcategories } from '../../services/products';
 import { THEME } from '../../styles/colors';
 import HomeHeader from './header';
 
@@ -12,14 +14,17 @@ export default class Home extends Component {
         super(props);
         this.state = {
             isCategorySelected: false,
+            categoryList: [],
         };
+        this.getsubCategory();
     }
     navigateToCategory(item) {
         this.props.navigation.navigate('Category', {
+            categoryList: this.state.categoryList,
             item: item,
         });
-
     }
+
     navigateToCatgoryList(item) {
         this.props.navigation.navigate('ProductListing', {
             item: item
@@ -28,6 +33,39 @@ export default class Home extends Component {
     navigateToProductDetails(item) {
         this.props.navigation.navigate('ProductDetails', {
             item: item
+        })
+    }
+
+    async getsubCategory() {
+        getSubcategories().then(data => {
+            console.log('get all subbbb ppcategoryyy++++++++++++--->', data);
+            this.setState({
+                categoryList: data,
+            })
+        }).catch(err => {
+            console.log('err--->', err);
+            this.showErrorToast();
+        })
+    }
+
+    async getCategory() {
+        // getProductDetails(694).then(data => {
+        //     console.log('dataa details--->', data);
+        //     this.setState({
+        //         productList: data,
+        //     })
+        // }).catch(err => {
+        //     console.log('err--->', err);
+        //     this.showErrorToast();
+        // })
+        getAllProducts().then(data => {
+            console.log('get all ppcategoryyy++++++++++++--->', data);
+            this.setState({
+                productList: data,
+            })
+        }).catch(err => {
+            console.log('err--->', err);
+            this.showErrorToast();
         })
     }
 
@@ -45,7 +83,7 @@ export default class Home extends Component {
                         </View>
                         <View style={styles.marginTop10}>
                             <CategorySelector
-                                categoryList={Constants.CATEGORY_LIST}
+                                categoryList={this.state.categoryList}
                                 isSwitchRequired={false}
                                 selectedCategory={(item) => {
                                     this.navigateToCategory(item);
@@ -60,14 +98,26 @@ export default class Home extends Component {
                     />
 
                     <ApnaProductsContainer
+                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
+                        navigateTocategory={this.navigateToCatgoryList.bind(this)}
                         heading={"Featured Products"}
                     />
 
                     <ApnaProductsContainer
+                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
+                        navigateTocategory={this.navigateToCatgoryList.bind(this)}
                         heading={"Fruits"}
                     />
 
                 </ScrollView>
+                <Footer style={{ backgroundColor: 'transparent' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ width: '100%' }}>
+                            <BottomNavigator />
+                        </View>
+                    </View>
+
+                </Footer>
             </SafeAreaView>
         );
     }

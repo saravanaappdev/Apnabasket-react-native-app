@@ -21,7 +21,7 @@ export default class ApnaQuantitySelector extends Component {
 
     async decrement() {
         await this.setState((prevState) => ({
-            quantity: prevState.quantity - 1,
+            quantity: prevState.quantity >= 1 ? prevState.quantity - 1 : 0,
         }))
         this.props.emitQuantity(this.state.quantity);
     }

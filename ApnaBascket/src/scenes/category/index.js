@@ -1,10 +1,11 @@
-import { Toast } from 'native-base';
+import { Footer, Toast } from 'native-base';
 import React, { Component } from "react";
 import { BackHandler, SafeAreaView, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import BottomNavigator from '../../components/orgainsms/bottomNavigator';
 import CategorySelector from '../../components/orgainsms/categorySelector';
 import ApnaProductsContainer from '../../components/orgainsms/productsContainer';
-import { getAllProducts } from '../../services/products';
+import { getSubcategories, getCategories } from '../../services/products';
 import { THEME } from '../../styles/colors';
 import HomeHeader from '../home/header';
 
@@ -15,13 +16,20 @@ export default class Category extends Component {
         this.state = {
             isCategorySelected: true,
             productList: [],
+            activeItem: '',
+            categoryList: [],
         };
         this.backIconClicked = this.backIconClicked.bind(this);
     }
 
+    componentWillMount() {
+        this.setState({
+            activeItem: this.props.navigation.state.params.item,
+            categoryList: this.props.navigation.state.params.categoryList
+        })
+    }
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
-        this.getProducts();
     }
 
     componentWillUnmount() {
@@ -51,15 +59,31 @@ export default class Category extends Component {
         })
     }
 
-    async getProducts() {
-        await getAllProducts().then(data => {
+    async getsubCategory() {
+        getSubcategories().then(data => {
+            console.log('get all subbbb ppcategoryyy++++++++++++--->', data);
             this.setState({
-                productList: data,
+                categoryList: data,
             })
         }).catch(err => {
+            console.log('err--->', err);
             this.showErrorToast();
         })
     }
+
+    async getSelectedCategoryProducts(item) {
+        console.log('idd--->', item);
+        getCategories(item.term_id).then(data => {
+            console.log('get all subbbb ppcategoryyy++++++++++++--->', data);
+            this.setState({
+                categoryList: data,
+            })
+        }).catch(err => {
+            console.log('err--->', err);
+            this.showErrorToast();
+        })
+    }
+
     navigateToProductDetails(item) {
         this.props.navigation.navigate('ProductDetails', {
             item: item
@@ -80,11 +104,17 @@ export default class Category extends Component {
                                 isCategoryHeader={true} />
                         </View>
                         <View style={{ marginTop: 10 }}>
-                            <CategorySelector selectedCategory={(item) => {
-                                this.setState({
-                                    isCategorySelected: true,
-                                })
-                            }} />
+                            <CategorySelector
+                                isSwitchRequired={true}
+                                activeItem={this.state.activeItem}
+                                categoryList={this.state.categoryList}
+                                selectedCategory={(item) => {
+                                    this.setState({
+                                        isCategorySelected: true,
+                                        activeItem: item,
+                                    })
+                                    this.getSelectedCategoryProducts(item);
+                                }} />
                         </View>
                     </View>
 
@@ -100,6 +130,13 @@ export default class Category extends Component {
                         heading={"Vegetables"}
                     />
                 </ScrollView>
+                <Footer style={{ backgroundColor: 'transparent' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ width: '100%' }}>
+                            <BottomNavigator />
+                        </View>
+                    </View>
+                </Footer>
             </SafeAreaView>
         );
     }

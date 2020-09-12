@@ -102,5 +102,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         paddingLeft: 10,
         paddingRight: 20,
-    }
+    },
+    
 });
