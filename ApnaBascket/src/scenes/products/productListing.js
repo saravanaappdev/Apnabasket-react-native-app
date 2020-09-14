@@ -1,6 +1,6 @@
 import { Footer } from 'native-base';
 import React, { Component } from "react";
-import { BackHandler, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { BackHandler, Dimensions, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import ApnaItemCard from '../../components/atoms/itemCard';
 import BottomNavigator from '../../components/orgainsms/bottomNavigator';
@@ -8,6 +8,8 @@ import { THEME } from '../../styles/colors';
 import { scaleFont } from '../../styles/mixins';
 import HomeHeader from '../home/header';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 export default class ProductsListing extends Component {
     constructor(props) {
         super(props);
@@ -48,10 +50,12 @@ export default class ProductsListing extends Component {
     render() {
         const renderItem = ({ item, index }) => {
             return (
-                <ApnaItemCard
-                    productDetails={item}
-                    selectedProductItem={(item) => { this.navigateToProductDetails(item) }}
-                />
+                <View style={styles.marginRight20}>
+                    <ApnaItemCard
+                        productDetails={item}
+                        selectedProductItem={(item) => { this.navigateToProductDetails(item) }}
+                    />
+                </View>
             );
         };
         return (
@@ -70,25 +74,23 @@ export default class ProductsListing extends Component {
                         </View>
                     </View>
 
-                    {/* Products category name */}
-                    <View style={styles.categoryHeader}>
-                        <View>
+                    <View style={{ marginLeft: 20 }}>
+                        {/* Products category name */}
+                        <View style={styles.categoryHeader}>
                             <Text style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(20) }}>{this.state.productCategoryName}</Text>
                             <View style={styles.bottomLine}></View>
                         </View>
-                        <Text style={styles.arrowRight}>
-                        </Text>
-                    </View>
 
-                    {/* Products */}
-                    <FlatList
-                        contentContainerStyle={styles.productList}
-                        showsHorizontalScrollIndicator={false}
-                        data={this.state.productList}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
-                        extraData={this.state}
-                    />
+                        {/* Products */}
+                        <FlatList
+                            contentContainerStyle={styles.productList}
+                            showsHorizontalScrollIndicator={false}
+                            data={this.state.productList}
+                            renderItem={renderItem}
+                            keyExtractor={(item) => item.id}
+                            extraData={this.state}
+                        />
+                    </View>
                 </ScrollView>
                 <Footer style={styles}>
                     <View style={styles.bottomNavigator}>
@@ -120,12 +122,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     categoryHeader: {
-        marginLeft: 20,
-        marginTop: 40,
-        marginRight: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        marginTop: 20,
+        marginRight: 40,
+        paddingBottom: 10,
     },
     marginX20: {
         marginLeft: 20, marginRight: 20,
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
         zIndex: 2,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-evenly',
+        justifyContent: 'flex-start',
     },
     bottomLine: {
         backgroundColor: THEME.ACTIVE_TEXT,
@@ -159,5 +158,8 @@ const styles = StyleSheet.create({
     productListing: {
         flex: 1,
         marginBottom: 20,
+    },
+    marginRight20: {
+        marginRight: 20,
     }
 });
