@@ -2,10 +2,8 @@ import { Footer } from 'native-base';
 import React, { Component } from "react";
 import { BackHandler, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { defineIcon } from '../../assets/images/svg';
 import ApnaItemCard from '../../components/atoms/itemCard';
 import BottomNavigator from '../../components/orgainsms/bottomNavigator';
-import Constants from '../../constants';
 import { THEME } from '../../styles/colors';
 import { scaleFont } from '../../styles/mixins';
 import HomeHeader from '../home/header';
@@ -16,12 +14,16 @@ export default class ProductsListing extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             isCategorySelected: true,
-            categoryList: Constants.CATEGORY_LIST,
+            productList: [],
         };
         this.backIconClicked = this.backIconClicked.bind(this);
     }
 
     componentDidMount() {
+        this.setState({
+            productCategoryName: this.props.navigation.state.params.heading,
+            productList: this.props.navigation.state.params.productList,
+        })
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
 
@@ -36,7 +38,7 @@ export default class ProductsListing extends Component {
 
     navigateToProductDetails(item) {
         this.props.navigation.navigate('ProductDetails', {
-            item: item
+            productDetails: item
         })
     }
 
@@ -47,16 +49,18 @@ export default class ProductsListing extends Component {
         const renderItem = ({ item, index }) => {
             return (
                 <ApnaItemCard
+                    productDetails={item}
                     selectedProductItem={(item) => { this.navigateToProductDetails(item) }}
                 />
             );
         };
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView style={{ flex: 1 }}
+                <ScrollView style={styles.productListing}
                     stickyHeaderIndices={[0]}
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* Header */}
                     <View
                         style={styles.header}>
                         <View style={styles.marginX20}>
@@ -65,28 +69,30 @@ export default class ProductsListing extends Component {
                                 isCategoryHeader={true} />
                         </View>
                     </View>
+
+                    {/* Products category name */}
                     <View style={styles.categoryHeader}>
                         <View>
-                            <Text style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(20) }}>Vegetables</Text>
+                            <Text style={{ color: THEME.ACTIVE_TEXT, fontSize: scaleFont(20) }}>{this.state.productCategoryName}</Text>
                             <View style={styles.bottomLine}></View>
                         </View>
-                        <Text onPress={() => { this.navigateToCategoryList(this.state.categoryList) }} style={styles.arrowRight}>
-                            View all
-                        {defineIcon('arrow-right')}
+                        <Text style={styles.arrowRight}>
                         </Text>
                     </View>
+
+                    {/* Products */}
                     <FlatList
                         contentContainerStyle={styles.productList}
                         showsHorizontalScrollIndicator={false}
-                        data={this.state.categoryList}
+                        data={this.state.productList}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id}
                         extraData={this.state}
                     />
                 </ScrollView>
-                <Footer style={{ backgroundColor: 'transparent' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ width: '100%' }}>
+                <Footer style={styles}>
+                    <View style={styles.bottomNavigator}>
+                        <View style={styles.width100}>
                             <BottomNavigator />
                         </View>
                     </View>
@@ -130,8 +136,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
-        // paddingLeft: 10,
-        // paddingRight: 20,
     },
     bottomLine: {
         backgroundColor: THEME.ACTIVE_TEXT,
@@ -142,5 +146,18 @@ const styles = StyleSheet.create({
     arrowRight: {
         color: THEME.ACTIVE_TEXT,
         fontSize: scaleFont(13),
+    },
+    footer: {
+        backgroundColor: 'transparent',
+    },
+    bottomNavigator: {
+        flexDirection: 'row', alignItems: 'center',
+    },
+    width100: {
+        width: '100%',
+    },
+    productListing: {
+        flex: 1,
+        marginBottom: 20,
     }
 });

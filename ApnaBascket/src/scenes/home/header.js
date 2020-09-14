@@ -76,9 +76,6 @@ export default class Header extends Component {
                             onFocus={() => this.onFocus} />
                     </View>) :
                     (<CategoryHeader backIconClicked={() => { this.props.backIconClicked() }} />)}
-
-                {/* small Header */}
-
             </View>
         )
     }
@@ -103,7 +100,7 @@ const styles = StyleSheet.create({
         maxWidth: 135,
         maxHeight: 135,
     },
-    iconSection: { 
+    iconSection: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
@@ -111,7 +108,7 @@ const styles = StyleSheet.create({
     marginRight20: {
         marginRight: 20,
     },
-    cartIcon: { 
+    cartIcon: {
         width: 16,
         height: 16,
         backgroundColor: THEME.DARK_ORANGE,

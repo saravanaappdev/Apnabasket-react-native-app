@@ -1,11 +1,11 @@
 import { Footer } from 'native-base';
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import BottomNavigator from '../../components/orgainsms/bottomNavigator';
 import CategorySelector from '../../components/orgainsms/categorySelector';
 import ApnaProductsContainer from '../../components/orgainsms/productsContainer';
-import { getAllProducts, getSubcategories } from '../../services/products';
+import { getCategoryProducts, getSubcategories } from '../../services/products';
 import { THEME } from '../../styles/colors';
 import HomeHeader from './header';
 
@@ -15,6 +15,10 @@ export default class Home extends Component {
         this.state = {
             isCategorySelected: false,
             categoryList: [],
+            diliProducts: [],
+            coffeeProducts: [],
+            fruitsProducts: [],
+            loading: true,
         };
         this.getsubCategory();
     }
@@ -25,54 +29,74 @@ export default class Home extends Component {
         });
     }
 
-    navigateToCatgoryList(item) {
+    navigateToCatgoryList(items, heading) {
         this.props.navigation.navigate('ProductListing', {
-            item: item
+            productList: items,
+            heading: heading,
         })
     }
+
     navigateToProductDetails(item) {
         this.props.navigation.navigate('ProductDetails', {
-            item: item
+            productDetails: item
         })
     }
 
+    // Functionality to get the categories and its products
     async getsubCategory() {
+        this.setState({
+            loading: true,
+        });
         getSubcategories().then(data => {
-            console.log('get all subbbb ppcategoryyy++++++++++++--->', data);
             this.setState({
                 categoryList: data,
+            }, () => {
+                // Get Home page data with random categories as no api for home page
+                this.getSelectedCategoryProducts('dili', data[0].term_id);
+                this.getSelectedCategoryProducts('coffee', data[7].term_id);
+                this.getSelectedCategoryProducts('fruits', data[3].term_id);
             })
         }).catch(err => {
-            console.log('err--->', err);
             this.showErrorToast();
         })
     }
 
-    async getCategory() {
-        // getProductDetails(694).then(data => {
-        //     console.log('dataa details--->', data);
-        //     this.setState({
-        //         productList: data,
-        //     })
-        // }).catch(err => {
-        //     console.log('err--->', err);
-        //     this.showErrorToast();
-        // })
-        getAllProducts().then(data => {
-            console.log('get all ppcategoryyy++++++++++++--->', data);
-            this.setState({
-                productList: data,
-            })
+    async getSelectedCategoryProducts(key, id) {
+        getCategoryProducts(id).then(data => {
+            this.setProducts(key, data);
         }).catch(err => {
-            console.log('err--->', err);
+            this.setState({
+                loading: false,
+            })
             this.showErrorToast();
         })
+    }
+
+    setProducts(key, data) {
+        switch (key) {
+            case 'dili':
+                this.setState({
+                    diliProducts: data,
+                });
+                break;
+            case 'coffee':
+                this.setState({
+                    coffeeProducts: data,
+                })
+                break;
+            case 'fruits':
+                this.setState({
+                    fruitsProducts: data,
+                    loading: false,
+                })
+                break;
+        }
     }
 
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView style={{ flex: 1 }}
+                <ScrollView style={styles.home}
                     stickyHeaderIndices={[0]}
                     showsVerticalScrollIndicator={false}
                 >
@@ -90,29 +114,37 @@ export default class Home extends Component {
                                 }} />
                         </View>
                     </View>
-
-                    <ApnaProductsContainer
-                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
-                        navigateTocategory={this.navigateToCatgoryList.bind(this)}
-                        heading={"Weekly Special"}
-                    />
-
-                    <ApnaProductsContainer
-                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
-                        navigateTocategory={this.navigateToCatgoryList.bind(this)}
-                        heading={"Featured Products"}
-                    />
-
-                    <ApnaProductsContainer
-                        selectedItem={(item) => { this.navigateToProductDetails(item) }}
-                        navigateTocategory={this.navigateToCatgoryList.bind(this)}
-                        heading={"Fruits"}
-                    />
-
+                    {this.state.loading ?
+                        (<View style={styles.loader}>
+                            <ActivityIndicator
+                                color={THEME.PRIMARY}
+                                size='large'
+                            /></View>) :
+                        (
+                            <View>
+                                <ApnaProductsContainer
+                                    selectedItem={(item) => { this.navigateToProductDetails(item) }}
+                                    productList={this.state.diliProducts}
+                                    navigateTocategory={this.navigateToCatgoryList.bind(this)}
+                                    heading={"Weekly Special"}
+                                />
+                                <ApnaProductsContainer
+                                    selectedItem={(item) => { this.navigateToProductDetails(item) }}
+                                    productList={this.state.coffeeProducts}
+                                    navigateTocategory={this.navigateToCatgoryList.bind(this)}
+                                    heading={"Featured Products"}
+                                />
+                                <ApnaProductsContainer
+                                    selectedItem={(item) => { this.navigateToProductDetails(item) }}
+                                    productList={this.state.fruitsProducts}
+                                    navigateTocategory={this.navigateToCatgoryList.bind(this)}
+                                    heading={"Top Seller"}
+                                />
+                            </View>)}
                 </ScrollView>
-                <Footer style={{ backgroundColor: 'transparent' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ width: '100%' }}>
+                <Footer style={styles.footer}>
+                    <View style={styles.alignCenter}>
+                        <View style={styles.width100}>
                             <BottomNavigator />
                         </View>
                     </View>
@@ -144,5 +176,25 @@ const styles = StyleSheet.create({
     },
     marginTop10: {
         marginTop: 10,
+    },
+    home: {
+        flex: 1,
+        marginBottom: 20,
+    },
+    loader: {
+        flex: 1,
+        marginTop:30,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    footer: {
+        backgroundColor:'transparent',
+    },
+    alignCenter: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    width100: {
+        width: '100%',
     }
 });

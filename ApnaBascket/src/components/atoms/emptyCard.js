@@ -14,6 +14,8 @@ export default class ApnaEmptyCard extends Component {
 
     render() {
         return (
+            // More products Card
+            // TODO: have to change it dynamically
             <TouchableOpacity style={[styles.emptyCard]}>
                 <Text style={{ fontSize: 16 }}>+5 more</Text>
             </TouchableOpacity>)
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
         width: 155,
         elevation: 3,
         zIndex: 10,
-        backgroundColor: 'white',
+        backgroundColor: THEME.WHITE,
         borderRadius: 20,
         padding: 10,
         marginLeft: 12,

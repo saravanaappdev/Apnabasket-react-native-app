@@ -47,9 +47,9 @@ export default class ApnaCategorySelector extends Component {
         this.props.selectedCategory(selectedItem)
     }
 
+    // To set the props data
     static getDerivedStateFromProps(nextProps, prevState) {
-        if (prevState.categoryList != nextProps.categoryList) {
-            console.log('prev--->', nextProps.categoryList);
+        if (prevState.categoryList != nextProps.categoryList && nextProps.categoryList.length > 0) {
             return {
                 categoryList: nextProps.categoryList,
             };
@@ -57,7 +57,7 @@ export default class ApnaCategorySelector extends Component {
     }
 
     convertHTMLToText(text) {
-        return text.replace('&amp;', '&');
+        return text.replace('&amp;', '&').toUpperCase();
     }
     render() {
         const renderItem = ({ item }) => {

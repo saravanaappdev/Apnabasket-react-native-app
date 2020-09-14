@@ -1,15 +1,16 @@
 import { Footer } from 'native-base';
 import React, { Component } from "react";
-import { BackHandler, Dimensions, FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { BackHandler, Dimensions, FlatList, Image, SafeAreaView, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import HTML from 'react-native-render-html';
 import Swiper from 'react-native-swiper';
-import Cabbage from '../../assets/images/png/cabbage.png';
 import { defineIcon } from '../../assets/images/svg';
 import ApnaButton from '../../components/atoms/Buttons';
 import ApnaItemCard from '../../components/atoms/itemCard';
 import ApnaQuantitySelector from '../../components/atoms/quantitySelector';
 import ApnaRatingStar from '../../components/atoms/ratingStar';
 import Constants from '../../constants';
+import { getProductDetails } from '../../services/products';
 import { THEME } from '../../styles/colors';
 import { scaleFont } from '../../styles/mixins';
 
@@ -22,12 +23,12 @@ export default class ProductsDetails extends Component {
         this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
         this.state = {
             isCategorySelected: true,
-            product: this.props.navigation.state.params.item || {},
+            product: this.props.navigation.state.params.productDetails || {},
             quantity: 0,
             slideIndex: 0,
-            slideStatus: [true, false, false],
+            slideStatus: [true, false, false, false, false],
             productList: Constants.ALL_PRODUCTS,
-            productDetails: Constants.PRODUCT_DESCRIPTION,
+            productDescription: Constants.PRODUCT_DESCRIPTION,
         };
         this.backIconClicked = this.backIconClicked.bind(this);
     }
@@ -40,8 +41,34 @@ export default class ProductsDetails extends Component {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
     }
 
+    async getProductsDetails(id) {
+        this.setState({
+            loading: true,
+        })
+        getProductDetails(id).then(data => {
+            this.setState({
+                product: data,
+                loading: false,
+            })
+        }).catch(err => {
+            this.setState({
+                loading: false,
+            })
+            this.showErrorToast();
+        })
+    }
+
+    async onShare() {
+        try {
+            await Share.share({
+                message: 'Test',
+            });
+        } catch (error) {
+            this.showErrorToast();
+        }
+    }
+
     handleBackButtonClick() {
-        console.log('go backk');
         this.props.navigation.goBack(null);
         return true;
     }
@@ -49,6 +76,15 @@ export default class ProductsDetails extends Component {
     backIconClicked() {
         this.props.navigation.goBack(null);
     }
+
+
+    showErrorToast() {
+        Toast.show({
+            text: "Something went wrong!",
+            type: "danger",
+        })
+    }
+
     setQuantity(quantity) {
         this.setState({
             quantity: quantity
@@ -62,50 +98,79 @@ export default class ProductsDetails extends Component {
     }
     navigateToProductDetails(item) {
         this.props.navigation.navigate('ProductDetails', {
-            item: item
+            productDetails: item
         })
     }
-    selectedItem(item) {
-        console.log('item--->', item);
+
+    calculateOfferPercentage(price, salePrice) {
+        return Math.round((price - salePrice) / price * 100);
     }
+
+    // functionality to set slide indicator action or inactive
     slideChange(activeIndex) {
         this.setState({
             slideIndex: activeIndex,
         })
-        console.log('--===>', this.state.slideStatus[0], this.state.slideStatus[1], this.state.slideStatus[2]);
-        
-        const slide=this.state.slideStatus.map((status, index) => {
-            console.log('indexx--->', index, activeIndex,  index == activeIndex);
+        const slide = this.state.slideStatus.map((status, index) => {
             return index == activeIndex;
         })
-        console.log();
         this.setState({
             slideStatus: slide,
         })
     }
+
+    getCarouselImages(images) {
+        let imageList = [];
+        for (let i = 0; i < images.length; i++) {
+            imageList.push(
+                <View style={styles.slide}>
+                    <Image
+                        source={{ uri: images[i].src }}
+                        style={styles.image}
+                    />
+                </View>
+            )
+        }
+        return imageList;
+    }
+
+    getCarouselIndicators(images) {
+        let indicatorList = [];
+        for (let index = 0; index < images.length; index++) {
+            indicatorList.push(
+                <View style={[styles.sliderIndicator, this.state.slideStatus[index] ? styles.activeIndicator : styles.inactiveIndicator, index === images.length - 1 ? '' : styles.marginRight10]}>
+                </View>
+            )
+        }
+        return indicatorList;
+    }
+
     render() {
         const renderItem = ({ item, index }) => {
             return (
                 <View style={styles.marginRight5}>
                     <ApnaItemCard
+                        productDetails={item}
                         selectedProductItem={(item) => { this.navigateToProductDetails(item) }}
                     />
                 </View>
             );
         };
+        let { product } = this.state;
         return (
             <SafeAreaView style={styles.container}>
-                <ScrollView style={{ backgroundColor: 'white', flex: 1 }}
+                <ScrollView style={styles.productDetails}
                     stickyHeaderIndices={[0]}
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* Heading */}
                     <View
-                        style={{ paddingTop: 35, paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: '#E5DEDA', zIndex: 100, backgroundColor: THEME.SECONDARY }}>
-                        <View style={{ marginLeft: 20, marginRight: 20, paddingTop: 50, paddingBottom: 5, flexDirection: 'row', alignItems: 'center' }}>
-                            <TouchableOpacity onPress={() => { this.backIconClicked() }} style={{ marginRight: 20, height: 30, width: 20, justifyContent: 'center' }}>
+                        style={styles.header}>
+                        <View style={styles.headerSection}>
+                            <TouchableOpacity onPress={() => { this.backIconClicked() }} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} style={styles.backIcon}>
                                 {defineIcon('arrow-back', 'black', 10, 18)}
                             </TouchableOpacity>
-                            <Text style={styles.heading}>{this.state.product.name}</Text>
+                            <Text style={styles.heading}>{product.name}</Text>
 
                         </View>
                     </View>
@@ -114,7 +179,6 @@ export default class ProductsDetails extends Component {
                         <View>
                             <Swiper style={styles.wrapper}
                                 onIndexChanged={(index) => {
-                                    console.log('index--->', index)
                                     this.slideChange(index);
                                 }}
                                 dotColor="transparent"
@@ -124,69 +188,59 @@ export default class ProductsDetails extends Component {
                                 showsButtons={false}
                                 showsPagination={false}
                             >
-                                <View style={styles.slide1}>
-                                    <Image
-                                        source={Cabbage}
-                                        style={styles.image}
-                                    />
-                                </View>
-                                <View style={styles.slide1}>
-                                    <Image
-                                        source={Cabbage}
-                                        style={styles.image}
-                                    />
-                                </View>
-                                <View style={styles.slide1}>
-                                    <Image
-                                        source={Cabbage}
-                                        style={styles.image}
-                                    />
-                                </View>
+                                {this.getCarouselImages(product.images)}
                             </Swiper>
                         </View>
                         {/* SKU */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={styles.skuSection}>
                             <View style={styles.sku}>
-                                <Text style={styles.skuText}>SKU: {this.state.product.sku}</Text>
+                                <Text style={styles.skuText}>SKU: {product.sku}</Text>
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <View style={[styles.sliderIndicator, this.state.slideStatus[0] ? styles.activeIndicator : styles.inactiveIndicator, { marginRight: 10 }]}>
-                                </View>
-                                <View style={[styles.sliderIndicator, this.state.slideStatus[1] ? styles.activeIndicator : styles.inactiveIndicator, { marginRight: 10 }]}>
-                                </View>
-                                <View style={[styles.sliderIndicator, this.state.slideStatus[2] ? styles.activeIndicator : styles.inactiveIndicator]}>
-                                </View>
+
+                            {/* carousel indicator */}
+                            <View style={styles.alignCenter}>
+                                {this.getCarouselIndicators(product.images)}
                             </View>
                         </View>
 
                         {/* Rating */}
-                        <View>
-                            <Text style={styles.productName}>{this.state.product.name} <Text style={styles.itemCount}>(Each One)</Text></Text>
-                            {/* <ApnaRatingStar /> */}
-                            <ApnaRatingStar rating={3} />
+                        <View style={styles.ratingContainer}>
+                            <View>
+                                <Text style={styles.productName}>{this.state.product.name} </Text>
+                                <ApnaRatingStar rating={product.rating_count} />
+                            </View>
+                            <View>
+                                <TouchableOpacity onPress={() => this.onShare()} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                                    {defineIcon('share')}
+                                </TouchableOpacity>
+                            </View>
                         </View>
 
                         {/* Description */}
-                        <View style={{ paddingTop: 15, paddingBottom: 15, marginTop: 30, borderBottomWidth: 2, borderTopWidth: 2, borderColor: THEME.LIGHT_GRAY, }}>
-                            <Text>Lemons are popular for adding flavour to teas, meals and desserts. Use the juice or zest the peel to incorporate lemons into your favourite dish.</Text>
-                        </View>
+                        {product.short_description.length > 0 ?
+                            (<View style={styles.productDescription}>
+                                <HTML html={product.short_description} />
+                            </View>) : null}
 
                         {/* Price Details */}
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 15, paddingBottom: 15, borderBottomWidth: 2, borderColor: THEME.LIGHT_GRAY }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={styles.priceDetails}>
+                            <View style={styles.alignCenter}>
+                                <View style={styles.alignCenter}>
                                     <Text style={styles.priceSymbol}>$</Text>
                                     <Text style={styles.price}>
-                                        0.99
-                            </Text>
+                                        {product.sale_price ? product.sale_price : product.regular_price}
+                                    </Text>
                                 </View>
-                                <Text style={styles.offerPrice}>
-                                    $ 0.99
-                            </Text>
+                                {product.sale_price ?
+                                    (<View style={styles.flexRow}>
+                                        <Text style={styles.offerPrice}>
+                                            $ {product.regular_price}
+                                        </Text>
 
-                                <View style={styles.offer}>
-                                    <Text style={styles.offerText}>10% OFF</Text>
-                                </View>
+                                        <View style={styles.offer}>
+                                            <Text style={styles.offerText}>{this.calculateOfferPercentage(product.regular_price, product.sale_price)}% OFF</Text>
+                                        </View>
+                                    </View>) : null}
                             </View>
                             <View>
                                 <ApnaQuantitySelector
@@ -196,21 +250,21 @@ export default class ProductsDetails extends Component {
                         </View>
 
                         {/* Product Details */}
-                        <View style={styles.productDetails}>
+                        <View style={styles.aboutProduct}>
                             <Text style={styles.detailsHeading}>About this product</Text>
                             <Text style={styles.description}>
-                                {this.state.productDetails}
+                                {this.state.productDescription}
                             </Text>
                         </View>
 
-                        {/* Sggesstions */}
+                        {/* Suggesstions */}
                         <View style={styles.suggestions}>
                             <View>
                                 <Text style={styles.suggestionHeading}>You may also be interested in</Text>
                                 <View style={styles.borderLine}></View>
                             </View>
                             <FlatList
-                                contentContainerStyle={{ flexGrow: 1, paddingLeft: 0, paddingRight: 20 }}
+                                contentContainerStyle={styles.suggestionList}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 data={this.state.productList}
@@ -222,14 +276,16 @@ export default class ProductsDetails extends Component {
 
                     </View>
                 </ScrollView>
-                <Footer >
+
+                {/* Footer Buttons */}
+                <Footer style={styles.footer}>
                     {/* Footer */}
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <View style={{ width: '50%' }}>
+                    <View style={styles.alignCenter}>
+                        <View style={styles.width50}>
                             <ApnaButton
                             />
                         </View>
-                        <View style={{ width: '50%' }}>
+                        <View style={styles.width50}>
                             <ApnaButton
                                 isCartButton={true}
                             />
@@ -253,7 +309,6 @@ const styles = StyleSheet.create({
         backgroundColor: THEME.BLACK,
     },
     header: {
-        backgroundColor: 'red',
         paddingLeft: 24,
         paddingRight: 24,
         borderWidth: 0,
@@ -294,6 +349,7 @@ const styles = StyleSheet.create({
     },
     price: {
         fontSize: scaleFont(28),
+        fontWeight: 'bold',
     },
     priceSymbol: {
         fontSize: scaleFont(16),
@@ -310,7 +366,7 @@ const styles = StyleSheet.create({
     offer: {
         backgroundColor: THEME.GREEN,
         width: 70,
-        height: 20,
+        height: 25,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 6,
@@ -320,7 +376,7 @@ const styles = StyleSheet.create({
         fontSize: scaleFont(10.5),
         color: THEME.WHITE,
     },
-    productDetails: {
+    aboutProduct: {
         marginTop: 20,
     },
     detailsHeading: {
@@ -348,14 +404,13 @@ const styles = StyleSheet.create({
     },
     wrapper: {
         height: 250,
-        backgroundColor: 'red',
-
+        backgroundColor: 'transparent',
     },
-    slide1: {
+    slide: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#9DD6EB'
+        backgroundColor: 'transparent',
     },
     slide2: {
         flex: 1,
@@ -378,9 +433,83 @@ const styles = StyleSheet.create({
         height: 4, width: 20, borderRadius: 100,
     },
     inactiveIndicator: {
-        backgroundColor: '#E5DEDA',
+        backgroundColor: THEME.LIGHT_GRAY,
     },
     activeIndicator: {
-        backgroundColor: '#F15C25',
+        backgroundColor: THEME.DARK_ORANGE,
+    },
+    marginRight10: {
+        marginRight: 10,
+    },
+    productDetails: {
+        backgroundColor: THEME.WHITE,
+        flex: 1,
+    },
+    header: {
+        paddingTop: 35,
+        paddingBottom: 10,
+        borderBottomWidth: 2,
+        borderBottomColor: THEME.LIGHT_GRAY,
+        zIndex: 100,
+        backgroundColor: THEME.SECONDARY
+    },
+    footer: {
+
+    },
+    priceDetails: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop: 15,
+        paddingBottom: 15,
+        borderBottomWidth: 2,
+        borderColor: THEME.LIGHT_GRAY,
+    },
+    alignCenter: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    flexRow: {
+        flexDirection: 'row',
+    },
+    suggestionList: {
+        flexGrow: 1,
+        paddingLeft: 0,
+        paddingRight: 20,
+    },
+    width50: {
+        width: '50%',
+    },
+    productDescription: {
+        borderBottomWidth: 2,
+        borderColor: THEME.LIGHT_GRAY,
+        paddingTop: 15,
+    },
+    ratingContainer: {
+        borderBottomWidth: 2,
+        borderColor: THEME.LIGHT_GRAY,
+        paddingBottom: 15,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+    },
+    skuSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    headerSection: {
+        marginLeft: 20,
+        marginRight: 20,
+        paddingTop: 50,
+        paddingBottom: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    backIcon: {
+        marginRight: 20,
+        height: 30,
+        width: 20,
+        justifyContent: 'center',
     }
 }); 

@@ -1,7 +1,6 @@
 import { View } from 'native-base';
 import React, { Component } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import Cabbage from '../../assets/images/png/cabbage.png';
 import Cart from '../../assets/images/png/cart.png';
 import ShoppingList from '../../assets/images/png/shopping-list.png';
 import Constants from '../../constants';
@@ -12,10 +11,11 @@ export default class ApnaItemCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isOfferAvaiable: this.props.isOfferAvaiable || false,
-            offerpercentage: this.props.offerpercentage || 0,
+            isOfferAvaiable: this.props.productDetails && this.props.productDetails.sale_price || false,
+            isSoldOut: this.props.productDetails && this.props.productDetails.stock_quantity > 0,
+            offerpercentage: this.props.offerpercentage || 20,
             isSoldOut: this.props.isSoldOut || false,
-            product: Constants.PRODUCT,
+            product: this.props.productDetails || Constants.PRODUCT,
         };
     }
 
@@ -23,45 +23,60 @@ export default class ApnaItemCard extends Component {
         this.props.selectedProductItem(this.state.product)
     }
 
+    // functionality to convert lbs to kg 
     lbsToKgConvert(itemCount) {
-        return `${(Constants.ONE_LB * itemCount).toFixed(2)} kg`
+        return `${Math.round(Constants.ONE_LB * itemCount)} kg`
+    }
+    
+    // functionality to calclate the offer percentage by price and saleprice
+    calculateOfferPercentage(price, salePrice) {
+        return Math.round((price - salePrice) / price * 100);
     }
     render() {
         return (
             <TouchableOpacity onPress={() => { this.selectedItem() }} style={[styles.itemCard]} activeOpacity={0.7}>
-                <View style={[styles.offerContainer, this.state.isOfferAvaiable && this.state.offerpercentage > 0 ? styles.offer : this.state.isSoldOut ? styles.soldOut : '']}>
-                    <Text style={styles.offerText}>{this.state.isOfferAvaiable && this.state.offerpercentage > 0 ? `${this.state.offerpercentage}% OFF` : this.state.isSoldOut ? 'SOLD OUT' : ''}
+                <View style={[styles.offerContainer, this.state.isOfferAvaiable ? styles.offer : this.state.isSoldOut ? styles.soldOut : '']}>
+                    <Text style={styles.offerText}>{this.state.isOfferAvaiable ? `${this.calculateOfferPercentage(this.props.productDetails.regular_price, this.props.productDetails.sale_price)}% OFF` : this.state.isSoldOut ? 'SOLD OUT' : ''}
                     </Text>
                 </View>
-                <View>
+                {/* Product image */}
+                <View style={styles.itemCardImage}>
                     <Image
-                        source={Cabbage}
+                        source={{ uri: this.props.productDetails && this.props.productDetails.images[0].src || '' }}
                         style={styles.cabbage}
                     />
-                </View>
+                </View >
+                
+                {/* Product details */}
+                <View style={styles.itemCardDescription}>
+                    <View style={styles.marginTop5}>
+                        <Text style={styles.weight}>{this.lbsToKgConvert(this.state.product.weight)}</Text>
+                        <Text numberOfLines={2} ellipsizeMode='tail' style={styles.productName}>{this.state.product.name}</Text>
+                    </View>
+                    
+                    {/* price section */}
+                    <View style={styles.priceDetails}>
+                        <View>
+                            {/* offer text*/}
+                            {this.state.isOfferAvaiable ?
+                                (<View>
+                                    <Text style={styles.offerPrice}>${this.props.productDetails.regular_price}</Text>
+                                    <Text style={styles.price}>${this.props.productDetails.sale_price}</Text>
+                                </View>)
+                                : (<Text style={styles.price}>${this.props.productDetails && this.props.productDetails.regular_price || ''}</Text>)}
+                        </View>
+                        <View style={styles.flexRow}>
+                            <Image
+                                source={ShoppingList}
+                                style={styles.ShoppingList}
+                            />
+                            <Image
+                                source={Cart}
+                                style={styles.cart}
+                            />
+                        </View>
+                    </View>
 
-                <View style={styles.marginTop5}>
-                    <Text style={styles.weight}>{this.lbsToKgConvert(this.state.product.weight)}</Text>
-                    <Text numberOfLines={2} ellipsizeMode='tail' style={styles.productName}>{this.state.product.name}</Text>
-                </View>
-                <View style={styles.priceDetails}>
-                    <View>
-                        {/* offer text*/}
-                        {this.state.isOfferAvaiable ?
-                            (<Text style={styles.offerPrice}>${this.state.product.regular_price}</Text>)
-                            : null}
-                        <Text style={styles.price}>${this.state.product.sale_price}</Text>
-                    </View>
-                    <View style={styles.flexRow}>
-                        <Image
-                            source={ShoppingList}
-                            style={styles.ShoppingList}
-                        />
-                        <Image
-                            source={Cart}
-                            style={styles.cart}
-                        />
-                    </View>
                 </View>
             </TouchableOpacity>)
     }
@@ -149,7 +164,13 @@ const styles = StyleSheet.create({
         height: 30,
     },
     cabbage: {
-        maxWidth: 135,
-        maxHeight: 135,
-    }
+        width: '100%',
+        height: '100%',
+    },
+    itemCardImage: {
+        height: '60%',
+    },
+    itemCardDescription: {
+        height: '40%',
+    },
 });

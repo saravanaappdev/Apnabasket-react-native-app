@@ -11,9 +11,11 @@ export default class ApnaSearchBox extends Component {
         };
     }
     onFocus() {
+        // TODO:
     }
 
     onBlur() {
+        // TODO:
     }
 
     pressedkey = (data) => {
@@ -23,7 +25,6 @@ export default class ApnaSearchBox extends Component {
         this.setState({
             value: value
         })
-
     }
     render() {
         return (
@@ -47,6 +48,7 @@ export default class ApnaSearchBox extends Component {
                                 marginRight: 10,
                             }}
                         />
+                        {/* Input */}
                         <Input
                             ref={el => {
                                 this.textInput = el;

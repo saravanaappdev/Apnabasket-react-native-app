@@ -1,3 +1,4 @@
+// In Bottom navigator there is no navigations as there is only home tab.
 import { View } from 'native-base';
 import React, { Component } from "react";
 import { StyleSheet, Text } from "react-native";

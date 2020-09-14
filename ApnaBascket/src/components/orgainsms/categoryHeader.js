@@ -14,12 +14,13 @@ export default class CategoryHeader extends Component {
         this.state = {};
     }
     onBlur() {
-
+        // TODO:
     }
     onFocus() {
-
+        // TODO:
     }
     searchItem(value) {
+        // TODO:
     }
     backIconClicked() {
         this.props.backIconClicked();
@@ -28,13 +29,15 @@ export default class CategoryHeader extends Component {
     render() {
         return (
             <View>
-                {/* small Header */}
+                {/* category Header */}
                 <View>
                     <View style={styles.CategoryHeader}>
-                        <TouchableOpacity onPress={() => { this.backIconClicked() }} style={{ marginRight: 20 }}>
+                        <TouchableOpacity onPress={() => { this.backIconClicked() }} style={styles.marginTop20} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                             {defineIcon('arrow-back', 'black', 10, 18)}
                         </TouchableOpacity>
-                        <View style={{ flex: 1, marginRight: 21 }}>
+                        
+                        {/* Search box */}
+                        <View style={styles.searchBox}>
                             <ApnaSearchBox
                                 value={""}
                                 type="search"
@@ -44,6 +47,7 @@ export default class CategoryHeader extends Component {
                                 placeholder="Search"
                                 onFocus={() => this.onFocus} />
                         </View>
+
                         <View style={styles.notifcationIconsSection}>
                             {/* cart Icon */}
                             <TouchableOpacity style={styles.marginTop20}>
@@ -119,5 +123,9 @@ const styles = StyleSheet.create({
     notification: {
         color: THEME.WHITE,
         fontSize: scaleFont(10)
-    }
+    },
+    searchBox: {
+        flex: 1,
+        marginRight: 21,
+    },
 });

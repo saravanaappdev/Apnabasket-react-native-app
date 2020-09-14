@@ -10,15 +10,15 @@ export default class ApnaQuantitySelector extends Component {
             quantity: 0,
         };
     }
-
+    // Functionality to increment the quantity
     async increment() {
-        console.log('inccc--->');
         await this.setState((prevState) => ({
             quantity: prevState.quantity + 1,
         }))
         this.props.emitQuantity(this.state.quantity);
     }
 
+     // Functionality to decrement the quantity
     async decrement() {
         await this.setState((prevState) => ({
             quantity: prevState.quantity >= 1 ? prevState.quantity - 1 : 0,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         width: 155,
         elevation: 3,
         zIndex: 10,
-        backgroundColor: 'white',
+        backgroundColor: THEME.WHITE,
         borderRadius: 20,
         padding: 10,
         marginLeft: 12,

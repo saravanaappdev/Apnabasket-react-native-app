@@ -7,21 +7,23 @@ export default class ApnaButton extends Component {
     constructor(props) {
         super(props);
     }
+    onClicked() {
 
+    }
     render() {
         return (
-            <TouchableOpacity activeOpacity={0.9} onPress={() => { }} style={[styles.buttonContainer, this.props.isCartButton ? styles.cartButton : styles.shoppingListButton]}>
+            <TouchableOpacity activeOpacity={0.9} onPress={() => { this.onClicked() }} style={[styles.buttonContainer, this.props.isCartButton ? styles.cartButton : styles.shoppingListButton]}>
                 {this.props.isCartButton ?
                     (
-                        <View style={{flexDirection:'row'}}>
+                        <View style={styles.flexRow}>
                             <Text>{defineIcon('cart')}</Text>
                             <Text style={styles.buttonText}>ADD TO CART </Text>
                         </View>
                     ) :
                     (
-                        <View style={{flexDirection:'row'}}>
+                        <View style={styles.flexRow}>
                             <Text>{defineIcon('shopping-list')}</Text>
-                            <Text style={styles.buttonText}>ADD TO CART </Text>
+                            <Text style={styles.buttonText}>SHOPPING LIST</Text>
                         </View>
                     )}
             </TouchableOpacity>
@@ -47,5 +49,8 @@ const styles = StyleSheet.create({
     buttonText: {
         marginLeft: 10,
         color: THEME.WHITE,
+    },
+    flexRow: {
+        flexDirection: 'row',
     }
 });

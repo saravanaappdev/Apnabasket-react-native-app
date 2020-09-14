@@ -11,7 +11,7 @@ export const getSubcategories = async () => {
     return await WooCommerceV1.get('subcategory/0')
 };
 
-export const getCategories = async (categoryId) => {
+export const getCategoryProducts = async (categoryId) => {
     return await WooCommerceV3.get('products',
         {
             category: categoryId

@@ -14,8 +14,9 @@ export default class ApnaRatingStar extends Component {
         };
     }
     render() {
+        // Rating
         var ratings = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < Constants.RATING_COUNT; i++) {
             if (this.state.rating > i) {
                 ratings.push(<View style={styles.marginRight5}>
                     {defineIcon('star')}

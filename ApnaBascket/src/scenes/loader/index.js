@@ -1,7 +1,10 @@
+// In this loader the check the token and navigate to app if exist else it navigate to Auth screen
+
 import AsyncStorage from '@react-native-community/async-storage';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { THEME } from '../../styles/colors';
+
 export default class Loader extends React.Component {
     constructor(props) {
         super(props);

@@ -5,11 +5,12 @@ import { default as Cart } from './cart-icon';
 import { default as Home } from './home';
 import { default as InactiveStar } from './inactive-star';
 import { default as More } from './more';
+import { default as NavigatorStar } from './navigator-star';
 import { default as Star } from './rating-star';
 import { default as ReOrder } from './re-order';
 import { default as ShoppingList } from './shopping-list-icon';
+import { default as Share } from './share';
 import { default as ShoppingListNavigator } from './shopping-list-navigator';
-import { default as NavigatorStar } from './navigator-star';
 
 export function defineIcon(name, color, width, height) {
   switch (name) {
@@ -34,7 +35,9 @@ export function defineIcon(name, color, width, height) {
     case "shopping-list-navigator":
       return <ShoppingListNavigator style={{ color: color ? color : 'white' }} width={width ? width : 22} height={height ? height : 20} />;
     case "navigator-star":
-      return <NavigatorStar style={{ color: color ? color : 'white' }} width={width ? width : 22} height={height ? height : 20} />; 
+      return <NavigatorStar style={{ color: color ? color : 'white' }} width={width ? width : 22} height={height ? height : 20} />;
+    case "share":
+      return <Share style={{ color: color ? color : '#746B65' }} width={width ? width : 22} height={height ? height : 20} />;
     default:
       return;
   }
